@@ -374,6 +374,7 @@ bool CollisionChecker::checkCommand(double cvx, double cvy, double cvth,
 
     if (inCollision(x, y, laser_points)) {
       params_mutex_.unlock();
+      ROS_WARN("CollisionChecker: collide when performing forward kinematics!");
       return false;
     }
   }
@@ -396,6 +397,7 @@ bool CollisionChecker::checkCommand(double cvx, double cvy, double cvth,
 
     if (inCollision(x, y, laser_points)) {
       params_mutex_.unlock();
+      ROS_WARN("CollisionChecker: cannot stop without collision!");
       return false;
     }
   }

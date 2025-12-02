@@ -82,7 +82,7 @@ void SFMControllerROS::initialize(std::string name, tf2_ros::Buffer *tf,
     float a;
     private_nh.param("a", a, float(3.0));
 
-    // Goal tolerance parameters
+    // Goal tolerance parameterslas
     float goal_tolerance, yaw_tolerance;
     private_nh.param("goal_tolerance", goal_tolerance, float(0.2));
     private_nh.param("yaw_tolerance", yaw_tolerance, float(0.35));
@@ -97,14 +97,14 @@ void SFMControllerROS::initialize(std::string name, tf2_ros::Buffer *tf,
     private_nh.param("sfm_obstacle_weight", sfm_obstacle_weight_, float(20.0));
     private_nh.param("sfm_people_weight", sfm_people_weight_, float(12.0));
 
-    // std::string laser_topic;
-    // private_nh.param("laser_topic", laser_topic, std::string("scan"));
-    // std::string people_topic;
-    // private_nh.param("people_topic", people_topic, std::string("people"));
-    // std::string obs_topic;
-    // private_nh.param("dyn_obs_topic", obs_topic, std::string("obstacles"));
-    // std::string odom_topic;
-    // private_nh.param("odom_topic", odom_topic, std::string("odom"));
+    std::string laser_topic;
+    private_nh.param("laser_topic", laser_topic, std::string("scan"));
+    std::string people_topic;
+    private_nh.param("people_topic", people_topic, std::string("people"));
+    std::string obs_topic;
+    private_nh.param("dyn_obs_topic", obs_topic, std::string("obstacles"));
+    std::string odom_topic;
+    private_nh.param("odom_topic", odom_topic, std::string("odom"));
 
     sensor_iface_ =
         new SFMSensorInterface(&private_nh, tf, max_lin_vel_, robot_radius,
@@ -114,20 +114,25 @@ void SFMControllerROS::initialize(std::string name, tf2_ros::Buffer *tf,
         &private_nh, tf, max_lin_vel_, max_vel_theta_, max_lin_acc_,
         max_theta_acc_, robot_radius, robot_frame_, planner_frame_);
 
-    // ros::NodeHandle n;
-    // laser_sub_ = n.subscribe<sensor_msgs::LaserScan>(
-    //     laser_topic.c_str(), 1, &SFMSensorInterface::laserCb, sensor_iface_);
+    ros::NodeHandle nh;
+    ROS_WARN("SFM_SENSOR_INTERFACE INITIATED\nlaser_topic: %s\npeople_topic: %s\ndyn_obs_topic: %s\nodom_topic: %s",
+             laser_topic.c_str(), obs_topic.c_str(), obs_topic.c_str(),
+             odom_topic.c_str());
+    laser_sub_ = nh.subscribe<sensor_msgs::LaserScan>(
+        laser_topic.c_str(), 10, &SFMSensorInterface::laserCb, sensor_iface_);
 
-    // people_sub_ = n.subscribe<people_msgs::People>(
-    //     people_topic.c_str(), 1, &SFMSensorInterface::peopleCb,
-    //     sensor_iface_);
+    
 
-    // dyn_obs_sub_ = n.subscribe<dynamic_obstacle_detector::DynamicObstacles>(
-    //     obs_topic.c_str(), 1, &SFMSensorInterface::dynamicObsCb,
-    //     sensor_iface_);
+    people_sub_ = nh.subscribe<people_msgs::People>(
+        people_topic.c_str(), 1, &SFMSensorInterface::peopleCb,
+        sensor_iface_);
+    ROS_WARN("Subscribing to obstacles topic: %s", obs_topic.c_str());
+    dyn_obs_sub_ = nh.subscribe<dynamic_obstacle_detector::DynamicObstacles>(
+        obs_topic.c_str(), 1, &SFMSensorInterface::dynamicObsCb,
+        sensor_iface_);
 
-    // odom_sub_ = n.subscribe<nav_msgs::Odometry>(
-    //     odom_topic.c_str(), 1, &SFMSensorInterface::odomCb, sensor_iface_);
+    odom_sub_ = nh.subscribe<nav_msgs::Odometry>(
+        odom_topic.c_str(), 1, &SFMSensorInterface::odomCb, sensor_iface_);
 
     // std::cout << std::endl
     //           << "SFM SENSOR INTERFACE:" << std::endl
@@ -178,6 +183,7 @@ bool SFMControllerROS::isGoalReached() { return goal_reached_; }
 
 bool SFMControllerROS::setPlan(
     const std::vector<geometry_msgs::PoseStamped> &orig_global_plan) {
+  ROS_INFO("Setting plan in SFMControllerROS...");
   if (!initialized_) {
     ROS_ERROR("This planner has not been initialized, please call initialize() "
               "before using this local planner");
@@ -196,12 +202,13 @@ bool SFMControllerROS::setPlan(
   }
   // reset the goal flag
   goal_reached_ = false;
-
+  ROS_INFO("Plan set successfully with %zu poses.", planner_path_.size());
   return true;
 }
 
 std::vector<geometry_msgs::PoseStamped> SFMControllerROS::transformPlan(
     const std::vector<geometry_msgs::PoseStamped> &plan, std::string frame) {
+      ROS_INFO("Transforming plan to frame: %s", frame.c_str());
   std::vector<geometry_msgs::PoseStamped> planner_plan;
   for (unsigned int i = 0; i < plan.size(); i++) {
     try {
@@ -213,10 +220,12 @@ std::vector<geometry_msgs::PoseStamped> SFMControllerROS::transformPlan(
       break;
     }
   }
+  ROS_INFO("Plan transformed successfully.");
   return planner_plan;
 }
 
 bool SFMControllerROS::computeVelocityCommands(geometry_msgs::Twist &cmd_vel) {
+  ROS_INFO("SFMControllerROS computeVelocityCommands called.");
   if (!initialized_) {
     ROS_ERROR("This planner has not been initialized, please call initialize() "
               "before using this planner");
@@ -251,11 +260,12 @@ bool SFMControllerROS::computeVelocityCommands(geometry_msgs::Twist &cmd_vel) {
                     "means that the footprint of the robot was in collision "
                     "for all simulated trajectories.");
     // publishPlan(transformed_plan, g_plan_pub_);
+    ROS_WARN("SFMControllerROS computeVelocityCommands failed to find a valid plan.");
     return false;
   }
   // publish information to the visualizer
   // publishPlan(transformed_plan, g_plan_pub_);
-
+  ROS_INFO("SFMControllerROS computeVelocityCommands succeeded, cmd_vel computed.");
   return true;
 }
 

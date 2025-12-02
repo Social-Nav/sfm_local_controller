@@ -34,6 +34,7 @@
 
 #include <vector>
 
+
 namespace Upo {
 namespace Navigation {
 namespace sfm_controller {
@@ -91,9 +92,11 @@ public:
    */
   bool isGoalReached();
 
+
   // void scanCb(const sensor_msgs::LaserScan::ConstPtr &laser);
 
 private:
+  
   /**
    * @brief Callback to update the local planner's parameters based on dynamic
    * reconfigure
@@ -111,8 +114,8 @@ private:
   std::string robot_frame_;
   ros::Publisher g_plan_pub_, l_plan_pub_;
 
-  // ros::Subscriber odom_sub_;
-  // ros::Subscriber laser_sub_, people_sub_, dyn_obs_sub_, sonar_sub_;
+  ros::Subscriber odom_sub_;
+  ros::Subscriber laser_sub_, people_sub_, dyn_obs_sub_, sonar_sub_;
 
   std::vector<geometry_msgs::PoseStamped> planner_path_;
   bool goal_reached_;
