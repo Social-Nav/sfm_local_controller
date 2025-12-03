@@ -12,12 +12,17 @@ find_package(catkin REQUIRED COMPONENTS
   pluginlib
   roscpp
   sensor_msgs
+  tf
   tf2
   tf2_geometry_msgs
   tf2_ros
   visualization_msgs
   dynamic_obstacle_detector
+  image_geometry
+  tvsn_msgs
 )
+
+find_package(OpenCV REQUIRED)
 
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
@@ -39,7 +44,7 @@ catkin_package(
   LIBRARIES 
     sfm_local_controller 
     sfm_controller_ros
-  CATKIN_DEPENDS geometry_msgs lightsfm nav_core nav_msgs pluginlib roscpp sensor_msgs tf2 tf2_geometry_msgs tf2_ros visualization_msgs
+  CATKIN_DEPENDS geometry_msgs lightsfm nav_core nav_msgs pluginlib roscpp sensor_msgs tf2 tf2_geometry_msgs tf2_ros visualization_msgs tvsn_msgs
 #  DEPENDS system_lib
 )
 
@@ -53,6 +58,7 @@ include_directories(
   include
   /usr/local/include  #to find lightsfm
   ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -65,6 +71,7 @@ include_directories(
  add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_gencfg)
  target_link_libraries(${PROJECT_NAME}
    ${catkin_LIBRARIES}
+   ${OpenCV_LIBRARIES}
  )
 
  ## Declare a C++ library
@@ -76,6 +83,7 @@ include_directories(
  target_link_libraries(sfm_controller_ros
    ${PROJECT_NAME}
    ${catkin_LIBRARIES}
+   ${OpenCV_LIBRARIES}
  )
 
 
@@ -95,4 +103,3 @@ install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
   PATTERN ".svn" EXCLUDE
 )
-

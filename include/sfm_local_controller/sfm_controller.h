@@ -21,7 +21,7 @@
 
 #include <algorithm> // for copy() and assign()
 #include <iterator>  // for back_inserter
-#include <tvss_nav/SemanticInstanceArray.h>   
+#include <tvsn_msgs/SemanticInstanceArray.h>   
 #include <unordered_map>
 #include <unordered_set>
 namespace Upo {
@@ -75,7 +75,7 @@ public:
    */
   bool fastCollisioncheck();
   
-  // void semCb(const tvss_nav::SemanticInstanceArray::ConstPtr& msg);
+  // void semCb(const tvsn_msgs::SemanticInstanceArray::ConstPtr& msg);
   // static bool centroidFromCloud(const sensor_msgs::PointCloud2& cloud,
   //                               geometry_msgs::Point& out);
   // bool transformPoint(const geometry_msgs::Point& in,

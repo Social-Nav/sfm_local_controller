@@ -10,7 +10,7 @@
  */
 
 #include <sfm_local_controller/sensor_interface.h>
-#include <tvss_nav/StringStamped.h>       
+#include <tvsn_msgs/StringStamped.h>       
 #include <jsoncpp/json/json.h>            
 #include <unordered_map>
 #include <string> 
@@ -57,7 +57,7 @@ cam_info_sub_ = n_.subscribe<sensor_msgs::CameraInfo>(
 
 label_mask_sub_ = n_.subscribe<sensor_msgs::CompressedImage>(
     "/segmented_image/label_mask/compressed", 1, &SFMSensorInterface::labelMaskCb, this);
-class_sub_ = n_.subscribe<tvss_nav::StringStamped>(
+class_sub_ = n_.subscribe<tvsn_msgs::StringStamped>(
       "/instance_class_dict", 1, &SFMSensorInterface::classDictCb, this);
 
   laser_received_ = false;
@@ -176,7 +176,7 @@ static bool parseClassDictSimple(const std::string& s,
   return i == n;
 }
 
-void SFMSensorInterface::classDictCb(const tvss_nav::StringStamped::ConstPtr& msg) {
+void SFMSensorInterface::classDictCb(const tvsn_msgs::StringStamped::ConstPtr& msg) {
   ROS_INFO("Received instance_class_dict message.");
   ROS_INFO("[classDictCb] stamp=%u.%09u frame_id=%s payload_size=%zu",
            msg->header.stamp.sec,

@@ -34,7 +34,7 @@
 #include <math.h>
 #include <mutex>
 
-#include <tvss_nav/StringStamped.h>   
+#include <tvsn_msgs/StringStamped.h>   
 #include <unordered_map>
 #include <string>
 #include <sensor_msgs/CameraInfo.h>
@@ -155,7 +155,7 @@ std::mutex mask_mtx_;
 ros::Time last_label_mask_stamp_;  // ★ 记录 mask 时间戳
 
 // 订阅回调
-void classDictCb(const tvss_nav::StringStamped::ConstPtr& msg);
+void classDictCb(const tvsn_msgs::StringStamped::ConstPtr& msg);
 void camInfoCb(const sensor_msgs::CameraInfo::ConstPtr& msg);
 void labelMaskCb(const sensor_msgs::CompressedImage::ConstPtr& msg);
 

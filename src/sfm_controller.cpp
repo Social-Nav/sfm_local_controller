@@ -12,7 +12,7 @@
 #include <ros/ros.h>
 #include <tf2_ros/transform_listener.h>
 #include <geometry_msgs/PointStamped.h>
-#include <tvss_nav/SemanticInstanceArray.h> 
+#include <tvsn_msgs/SemanticInstanceArray.h> 
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <sensor_msgs/point_cloud2_iterator.h>
@@ -103,7 +103,7 @@ SFMController::SFMController(
   // n->param("sfm/sem_frame", sem_frame_, std::string("map"));
   // sem_sub_ = n->subscribe("/instance_array", 1, &SFMController::semCb, this);
 }
-// void SFMController::semCb(const tvss_nav::SemanticInstanceArray::ConstPtr& msg)
+// void SFMController::semCb(const tvsn_msgs::SemanticInstanceArray::ConstPtr& msg)
 // {
 //   sem_objs_.clear();
 
